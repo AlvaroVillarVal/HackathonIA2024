@@ -1,0 +1,41 @@
+{
+	"info": {
+		"_postman_id": "e8249a0b-230c-4a75-918d-ed0f6f59d07f",
+		"name": "Hackaton",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3484054"
+	},
+	"item": [
+		{
+			"name": "http://127.0.0.1:8000/inferencia",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"time\":0,\r\n\"ogbjets_OK\":0,\r\n\"ogbjets_NOK\":0,\r\n\"score\":0,\r\n\"score_min\":0,\r\n\"score_max\":0,\r\n\"objetcs_OK\":0,\r\n\"response_time_max\":0,\r\n\"response_time_mean\":0,\r\n\"response_time_min\":0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/inferencia",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"inferencia"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
