@@ -29,6 +29,7 @@ tasa_aciertos=0
 data_normalized1=data_normalized.copy()
 data_normalized2=data_normalized.copy()
 data_normalized3=data_normalized.copy()
+data_normalized1["Tasa aciertosobjetivo"]=data_normalized1["Tasa aciertos"]
 X1 = data_normalized1.drop(["Ratio de aparición de los objetos en el juego.","Distancia al jugador de los objetos.","Ratio de recompensa de los objetos.","Tamaño de los objetos."], axis=1)  # Use all columns except targets as features
 y1 = data_normalized1[["Distancia al jugador de los objetos.","Ratio de aparición de los objetos en el juego.","Ratio de recompensa de los objetos.","Tamaño de los objetos."]]  # Use 'target1', 'target2', 'target3', 'target4' columns as labels
 
@@ -111,36 +112,48 @@ print(f"Mean Squared Error: {mse}")
 r2 = r2_score(y3_test, predictions)
 print(f"R-squared: {r2}")
 
-single_row_normalized2 = single_row = X1.iloc[[9990]].copy()
+for i in range(0,100):
+    single_row_normalized2 = single_row = X1.iloc[[9000+i]].copy()
+    tasa_aciertos=0
+    print("\n")
+    objetivomin=0.65
+    objetivomax=0.65
+    tasa_aciertos_old=-1111111111111111111111
+    while tasa_aciertos < 0.55 or tasa_aciertos > 0.75:
+       
 
-#while tasa_aciertos < 0.6 or tasa_aciertos > 0.70:
-    # Create a single row DataFrame for prediction
+        # Create a single row DataFrame for prediction
 
-    # Normalize the single row data
-      # Get the first row as a DataFrame and create a copy
-for i in range(0,400):    
-    single_row_normalized2.loc["Tasa aciertos"] = 1
+        # Normalize the single row data
+        # Get the first row as a DataFrame and create a copy
     
-    # # Make prediction for the single row
-    prediction = mlp1.predict(single_row_normalized2)
-    dist = prediction[0][0]
-    aparicion = prediction[0][1]
-    recompensa = prediction[0][2]
-    tamaño = prediction[0][3]
-    listaprediccion = [dist,aparicion, recompensa, tamaño]
-   
-    prediction_df = pd.DataFrame([listaprediccion], columns=X2.columns)
-    predicción = mlp2.predict(prediction_df)
-    listaprediccion2 = [predicción[0][0],predicción[0][1],predicción[0][2]]
-    listaprediccion3=listaprediccion2.copy()
-    listaprediccion2+=listaprediccion
-    listaprediccion2.append(predicción[0][3])
-    single_row_normalized1 = pd.DataFrame([listaprediccion2], columns=X3.columns)
-    tasa_aciertos= mlp3.predict(single_row_normalized1)
-    listaprediccion3.append(predicción[0][3])
-    listaprediccion3.append(tasa_aciertos[0])
-    single_row_normalized2 = pd.DataFrame([listaprediccion3], columns=X1.columns)
-    print(tasa_aciertos)
+        
+        # # Make prediction for the single row
+        prediction = mlp1.predict(single_row_normalized2)
+        dist = prediction[0][0]
+        aparicion = prediction[0][1]
+        recompensa = prediction[0][2]
+        tamaño = prediction[0][3]
+        listaprediccion = [dist,aparicion, recompensa, tamaño]
+    
+        prediction_df = pd.DataFrame([listaprediccion], columns=X2.columns)
+        predicción = mlp2.predict(prediction_df)
+        listaprediccion2 = [predicción[0][0],predicción[0][1],predicción[0][2]]
+        listaprediccion3=listaprediccion2.copy()
+        listaprediccion2+=listaprediccion
+        listaprediccion2.append(predicción[0][3])
+        single_row_normalized1 = pd.DataFrame([listaprediccion2], columns=X3.columns)
+        tasa_aciertos= mlp3.predict(single_row_normalized1)
+        listaprediccion3.append(predicción[0][3])
+        listaprediccion3.append(tasa_aciertos[0])
+        listaprediccion3.append(0.65)
+        single_row_normalized2 = pd.DataFrame([listaprediccion3], columns=X1.columns)
+        print(tasa_aciertos)
+        if abs(tasa_aciertos-tasa_aciertos_old)<0.0001:
+            break
+        else:
+            tasa_aciertos_old=tasa_aciertos
+            
 
 
 
