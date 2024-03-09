@@ -1,0 +1,187 @@
+from sklearn.neural_network import MLPRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
+from sklearn.preprocessing import MinMaxScaler
+import pandas as pd
+import matplotlib.pyplot as plt
+class AI:
+
+    def __init__(self):
+        csv_file = 'RetoIA\datasetIA.csv'
+
+        # Read the CSV file using pandas
+        data = pd.read_csv(csv_file,sep=';')
+        for col in data.columns:
+            data[col] = pd.to_numeric(data[col], errors='coerce')
+        data["Recompensa media"]= (data["Recompensa minima"]+data["Recompensa maxima"])/2
+        data["Tasa aciertos"]=data["Aciertos"]/(data["Aciertos"]+data["Fallos"])
+        columns_to_drop = ["Numero de piezas", "Tiempo total de la prueba","Trial values", "Aciertos","Fallos","Recompensa minima", "Recompensa maxima"]  # Lista de columnas a eliminar
+        data = data.drop(columns=columns_to_drop)  # Eliminar las columnas del DataFrame
+        data = data.dropna()
+        data = data.rename(columns={'Ratio de aparición de los objetos en el juego.': 'Ratio de aparición de los objetos'})
+        scaler = MinMaxScaler()
+        # Assuming 'data' is your DataFrame
+        data_normalized = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
+        data_normalized1=data_normalized.copy()
+        data_normalized2=data_normalized.copy()
+        data_normalized3=data_normalized.copy()
+        data_normalized1["Tasa aciertosobjetivo"]=data_normalized1["Tasa aciertos"]
+
+
+
+        self.X1 = data_normalized1.drop(["Ratio de aparición de los objetos","Distancia al jugador de los objetos.","Ratio de recompensa de los objetos.","Tamaño de los objetos."], axis=1)  # Use all columns except targets as features
+        y1 = data_normalized1[["Distancia al jugador de los objetos.","Ratio de aparición de los objetos","Ratio de recompensa de los objetos.","Tamaño de los objetos."]]  # Use 'target1', 'target2', 'target3', 'target4' columns as labels
+
+        # Split the data into training set and test set
+        X1_train, X1_test, y1_train, y1_test = train_test_split(self.X1, y1, test_size=0.1, random_state=42)
+
+        # Create MLPRegressor object
+        self.mlp1 = MLPRegressor(hidden_layer_sizes=(100,100, 100), max_iter=1000)
+
+        # Train the model
+        self.mlp1.fit(X1_train, y1_train)
+
+        # Use the model to make predictions
+        predictions = self.mlp1.predict(X1_test)
+        print("Precisión del primer modelo:")
+        # Calculate Mean Absolute Error
+        mae = mean_absolute_error(y1_test, predictions)
+        print(f"\tMean Absolute Error: {mae}")
+
+        # Calculate Mean Squared Error
+        mse = mean_squared_error(y1_test, predictions)
+        print(f"\tMean Squared Error: {mse}")
+
+        # Calculate R-squared
+        r2 = r2_score(y1_test, predictions)
+        print(f"\tR-squared: {r2}")
+
+        self.X2 = data_normalized2.drop(["Tasa aciertos","Recompensa media","Puntuación maxima", "Tiempo de respuesta min", "Tiempo de respuesta maximo"], axis=1)  # Use all columns except targets as features
+        y2 = data_normalized2[[ "Puntuación maxima", "Tiempo de respuesta min", "Tiempo de respuesta maximo","Recompensa media"]]  # Use 'target1', 'target2', 'target3', 'target4' columns as labels
+
+        # Split the data into training set and test set
+        X2_train, X2_test, y2_train, y2_test = train_test_split(self.X2, y2, test_size=0.1, random_state=42)
+
+        # Create MLPRegressor object
+        self.mlp2 = MLPRegressor(hidden_layer_sizes=(30,30, 30), max_iter=1000)
+
+        # Train the model
+        self.mlp2.fit(X2_train, y2_train)
+
+        # Use the model to make predictions
+        predictions = self.mlp2.predict(X2_test)
+        print("Precisión del segundo modelo:")
+        # Calculate Mean Absolute Error
+        mae = mean_absolute_error(y2_test, predictions)
+        print(f"\tMean Absolute Error: {mae}")
+
+        # Calculate Mean Squared Error
+        mse = mean_squared_error(y2_test, predictions)
+        print(f"\tMean Squared Error: {mse}")
+
+        # Calculate R-squared
+        r2 = r2_score(y2_test, predictions)
+        print(f"\tR-squared: {r2}")
+
+
+        self.X3 = data_normalized3.drop(["Tasa aciertos"], axis=1)  # Use all columns except targets as features
+        y3 = data_normalized3["Tasa aciertos"]  # Use 'target1', 'target2', 'target3', 'target4' columns as labels
+
+        # Split the data into training set and test set
+        X3_train, X3_test, y3_train, y3_test = train_test_split(self.X3, y3, test_size=0.1, random_state=42)
+
+        # Create MLPRegressor object
+        self.mlp3 = MLPRegressor(hidden_layer_sizes=(30,30, 30), max_iter=1000)
+
+        # Train the model
+        self.mlp3.fit(X3_train, y3_train)
+
+        # Use the model to make predictions
+        predictions = self.mlp3.predict(X3_test)
+        print("Precisión del tercer modelo:")
+        # Calculate Mean Absolute Error
+        mae = mean_absolute_error(y3_test, predictions)
+        print(f"\tMean Absolute Error: {mae}")
+
+        # Calculate Mean Squared Error
+        mse = mean_squared_error(y3_test, predictions)
+        print(f"\tMean Squared Error: {mse}")
+
+        # Calculate R-squared
+        r2 = r2_score(y3_test, predictions)
+        print(f"\tR-squared: {r2}")
+
+    def predict(self, data):
+
+        tasa_aciertos=0
+        tasa_aciertos_old=-1111111111111111111111
+        single_row_normalized2 = data.copy()
+        single_row_normalized2["Recompensa media"]= (single_row_normalized2["Recompensa minima"]+single_row_normalized2["Recompensa maxima"])/2
+        single_row_normalized2["Tasa aciertos"]= single_row_normalized2["Aciertos"]/( single_row_normalized2["Aciertos"]+ single_row_normalized2["Fallos"])
+        single_row_normalized2["Tasa aciertosobjetivo"]=single_row_normalized2["Tasa aciertos"]
+        single_row_normalized2 = single_row_normalized2.rename(columns={'Ratio de aparición de los objetos en el juego.': 'Ratio de aparición de los objetos'})
+        columns_to_drop = ["Numero de piezas", "Tiempo total de la prueba","Trial values", "Aciertos","Fallos","Recompensa minima", "Recompensa maxima","Ratio de aparición de los objetos","Distancia al jugador de los objetos.","Ratio de recompensa de los objetos.","Tamaño de los objetos."]  # Lista de columnas a eliminar
+        single_row_normalized2 = single_row_normalized2.drop(columns=columns_to_drop)  # Eliminar las columnas del DataFrame    
+        while tasa_aciertos < 0.55 or tasa_aciertos > 0.75:
+        
+
+
+            # # Make prediction for the single row
+            prediction = self.mlp1.predict(single_row_normalized2)
+            dist = prediction[0][0]
+            aparicion = prediction[0][1]
+            recompensa = prediction[0][2]
+            tamaño = prediction[0][3]
+            listaprediccion = [dist,aparicion, recompensa, tamaño]
+        
+            prediction_df = pd.DataFrame([listaprediccion], columns=self.X2.columns)
+            predicción = self.mlp2.predict(prediction_df)
+            listaprediccion2 = [predicción[0][0],predicción[0][1],predicción[0][2]]
+            listaprediccion3=listaprediccion2.copy()
+            listaprediccion2+=listaprediccion
+            listaprediccion2.append(predicción[0][3])
+            single_row_normalized1 = pd.DataFrame([listaprediccion2], columns=self.X3.columns)
+            tasa_aciertos= self.mlp3.predict(single_row_normalized1)
+            listaprediccion3.append(predicción[0][3])
+            listaprediccion3.append(tasa_aciertos[0])
+            listaprediccion3.append(0.65)
+            single_row_normalized2 = pd.DataFrame([listaprediccion3], columns=self.X1.columns)
+            if abs(tasa_aciertos-tasa_aciertos_old)<0.0001:
+                break
+            else:
+                tasa_aciertos_old=tasa_aciertos
+        return predicción,tasa_aciertos
+
+
+#######################################################################################################################
+    #Runer Code
+csv_file = 'RetoIA\datasetIA.csv'
+# # Read the CSV file using pandas
+data = pd.read_csv(csv_file,sep=';')
+for col in data.columns:
+     data[col] = pd.to_numeric(data[col], errors='coerce')
+data = data.dropna()
+scaler = MinMaxScaler()
+# # Assuming 'data' is your DataFrame
+data_normalized = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
+ia=AI()
+lista_cambios=[]
+lista_tasas=[]
+for i in range(0,100):
+    cambios,tasa=ia.predict(data_normalized.iloc[[9800+i]])
+    lista_cambios.append(cambios)
+    lista_tasas.append(tasa)    
+print(lista_cambios)
+plt.plot(lista_tasas)
+
+plt.title('Tasa de Aciertos')
+plt.xlabel('Iteración')
+plt.ylabel('Tasa de Aciertos')
+plt.ylim(0, 1)
+plt.xlim(0, 99)
+plt.grid(True)
+plt.show()
+
+
