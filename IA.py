@@ -173,7 +173,7 @@ for i in range(0,100):
     cambios,tasa=ia.predict(data_normalized.iloc[[9800+i]])
     lista_cambios.append(cambios)
     lista_tasas.append(tasa)    
-print(lista_cambios)
+print(lista_cambios[1])
 plt.plot(lista_tasas)
 
 plt.title('Tasa de Aciertos')
